@@ -1,12 +1,26 @@
-import './App.css'
+import React, { useState } from 'react';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import { EmployeesPage } from './pages/EmployeesPage';
+import { PayrollPage } from './pages/PayrollPage';
 
-function App() {
+type View = 'employees' | 'payroll';
+
+const App: React.FC = () => {
+  const [currentView, setCurrentView] = useState<View>('employees');
 
   return (
-    <>
-    <p className='text-center text-2xl'>Hello</p>
-    </>
-  )
-}
+    <Provider store={store}>
+      <div className="min-h-screen bg-gray-50">
+        {currentView === 'employees' && (
+          <EmployeesPage onViewPayroll={() => setCurrentView('payroll')} />
+        )}
+        {currentView === 'payroll' && (
+          <PayrollPage onBack={() => setCurrentView('employees')} />
+        )}
+      </div>
+    </Provider>
+  );
+};
 
-export default App
+export default App;
