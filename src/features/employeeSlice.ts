@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { Employee, CreateEmployeeRequest, UpdateEmployeeRequest } from '../types/employee.types';
-import { employeeApi } from '../services/employeeApi';
+import  {employeeApi}  from '@/services/employeeApi';
 
 interface EmployeeState {
   employees: Employee[];

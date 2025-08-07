@@ -1,6 +1,6 @@
 // import type { ApiError } from '../types/api.types';
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8000/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000/api';
 
 class ApiClient {
   private async request<T>(

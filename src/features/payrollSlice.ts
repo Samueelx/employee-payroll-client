@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayrollData } from '../types/payroll.types';
-import { employeeApi } from '../../services/employeeApi';
+import { employeeApi } from '@/services/employeeApi';
 
 interface PayrollState {
   payroll: PayrollData | null;

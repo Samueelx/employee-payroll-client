@@ -9,7 +9,7 @@ import { Save, ArrowLeft } from 'lucide-react';
 
 const EmployeeForm = ({ employee, onBack }: { employee?: Employee | null; onBack: () => void }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { error } = useSelector((state: RootState) => state.employees.error);
+  const  error : string|null = useSelector((state: RootState) => state.employees.error);
   const isEdit = !!employee;
 
   const [formData, setFormData] = useState<Employee>({

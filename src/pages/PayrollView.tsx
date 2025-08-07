@@ -6,10 +6,11 @@ import { ErrorMessage } from '../components/common/ErrorMessage';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { ArrowLeft, DollarSign } from 'lucide-react';
 import type { Employee } from '@/types/employee.types';
+import { formatFullName } from '@/utils/formatters';
 
 const PayrollView = ({ onBack }: { onBack: () => void }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { payroll, loading, error } = useSelector((state: RootState) => state.app);
+  const { payroll, loading, error } = useSelector((state: RootState) => state.payroll);
 
   useEffect(() => {
     dispatch(fetchPayroll());
@@ -90,7 +91,7 @@ const PayrollView = ({ onBack }: { onBack: () => void }) => {
                     <tr key={employee.employee_id} className="border-b hover:bg-gray-50">
                       <td className="py-3 px-4">
                         <div>
-                          <p className="font-medium text-gray-900">{employee.first_name}</p>
+                          <p className="font-medium text-gray-900">{formatFullName(employee.first_name, employee.last_name)}</p>
                           <p className="text-sm text-gray-500">{employee.employee_id}</p>
                         </div>
                       </td>
