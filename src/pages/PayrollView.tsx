@@ -5,8 +5,7 @@ import type { AppDispatch, RootState } from '../store';
 import { ErrorMessage } from '../components/common/ErrorMessage';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { ArrowLeft, DollarSign } from 'lucide-react';
-import type { Employee } from '@/types/employee.types';
-import { formatFullName } from '@/utils/formatters';
+import type { PayrollEmployee } from '@/types/payroll.types';
 
 const PayrollView = ({ onBack }: { onBack: () => void }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -87,16 +86,16 @@ const PayrollView = ({ onBack }: { onBack: () => void }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {payroll.data.map((employee: Employee) => (
+                  {payroll.data.map((employee: PayrollEmployee) => (
                     <tr key={employee.employee_id} className="border-b hover:bg-gray-50">
                       <td className="py-3 px-4">
                         <div>
-                          <p className="font-medium text-gray-900">{formatFullName(employee.first_name, employee.last_name)}</p>
+                          <p className="font-medium text-gray-900">{employee.full_name}</p>
                           <p className="text-sm text-gray-500">{employee.employee_id}</p>
                         </div>
                       </td>
                       <td className="py-3 px-4">{employee.department}</td>
-                      <td className="py-3 px-4 font-medium">{formatCurrency(employee.basic_salary)}</td>
+                      <td className="py-3 px-4 font-medium">{formatCurrency(employee.gross_salary)}</td>
                       <td className="py-3 px-4 text-red-600">{formatCurrency(employee.deductions.shif)}</td>
                       <td className="py-3 px-4 text-red-600">{formatCurrency(employee.deductions.housing_levy)}</td>
                       <td className="py-3 px-4 text-red-600">{formatCurrency(employee.deductions.paye)}</td>
