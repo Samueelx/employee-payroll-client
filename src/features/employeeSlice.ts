@@ -1,60 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { Provider, useSelector, useDispatch } from 'react-redux';
-import { configureStore, createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import type { Employee, CreateEmployeeRequest, UpdateEmployeeRequest } from '../types/employee.types';
+import { employeeApi } from '../services/api';
 
+interface EmployeeState {
+  employees: Employee[];
+  loading: boolean;
+  error: string | null;
+}
 
-const API_BASE = 'http://localhost:8000/api';
+const initialState: EmployeeState = {
+  employees: [],
+  loading: false,
+  error: null,
+};
 
+export const fetchEmployees = createAsyncThunk(
+  'employees/fetchEmployees',
+  async () => {
+    return await employeeApi.getEmployees();
+  }
+);
 
-const fetchEmployees = createAsyncThunk('app/fetchEmployees', async () => {
-  const response = await fetch(`${API_BASE}/employees`);
-  if (!response.ok) throw new Error('Failed to fetch employees');
-  return response.json();
-});
+export const createEmployee = createAsyncThunk(
+  'employees/createEmployee',
+  async (employee: CreateEmployeeRequest) => {
+    return await employeeApi.createEmployee(employee);
+  }
+);
 
-const createEmployee = createAsyncThunk('app/createEmployee', async (employee: Omit<Employee, 'id'>) => {
-  const response = await fetch(`${API_BASE}/employees`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(employee),
-  });
-  if (!response.ok) throw new Error('Failed to create employee');
-  return response.json();
-});
+export const updateEmployee = createAsyncThunk(
+  'employees/updateEmployee',
+  async ({ id, employee }: { id: number; employee: UpdateEmployeeRequest }) => {
+    return await employeeApi.updateEmployee(id, employee);
+  }
+);
 
-const updateEmployee = createAsyncThunk('app/updateEmployee', async ({ id, employee }: { id: number; employee: Employee }) => {
-  const response = await fetch(`${API_BASE}/employees/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(employee),
-  });
-  if (!response.ok) throw new Error('Failed to update employee');
-  return response.json();
-});
+export const deleteEmployee = createAsyncThunk(
+  'employees/deleteEmployee',
+  async (id: number) => {
+    await employeeApi.deleteEmployee(id);
+    return id;
+  }
+);
 
-const deleteEmployee = createAsyncThunk('app/deleteEmployee', async (id: number) => {
-  const response = await fetch(`${API_BASE}/employees/${id}`, {
-    method: 'DELETE',
-  });
-  if (!response.ok) throw new Error('Failed to delete employee');
-  return id;
-});
-
-const fetchPayroll = createAsyncThunk('app/fetchPayroll', async () => {
-  const response = await fetch(`${API_BASE}/payroll`);
-  if (!response.ok) throw new Error('Failed to fetch payroll');
-  return response.json();
-});
-
-// Redux slice
-const appSlice = createSlice({
-  name: 'app',
-  initialState: {
-    employees: [],
-    payroll: null,
-    loading: false,
-    error: null,
-  } as AppState,
+const employeeSlice = createSlice({
+  name: 'employees',
+  initialState,
   reducers: {
     clearError: (state) => {
       state.error = null;
@@ -62,60 +53,31 @@ const appSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Employees
       .addCase(fetchEmployees.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchEmployees.fulfilled, (state, action) => {
         state.loading = false;
-        state.employees = action.payload.data || action.payload;
+        state.employees = action.payload;
       })
       .addCase(fetchEmployees.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch employees';
       })
-      // Create employee
       .addCase(createEmployee.fulfilled, (state, action) => {
-        state.employees.push(action.payload.data || action.payload);
+        state.employees.push(action.payload);
       })
-      .addCase(createEmployee.rejected, (state, action) => {
-        state.error = action.error.message || 'Failed to create employee';
-      })
-      // Update employee
       .addCase(updateEmployee.fulfilled, (state, action) => {
         const index = state.employees.findIndex(emp => emp.id === action.payload.id);
         if (index !== -1) {
-          state.employees[index] = action.payload.data || action.payload;
+          state.employees[index] = action.payload;
         }
       })
-      .addCase(updateEmployee.rejected, (state, action) => {
-        state.error = action.error.message || 'Failed to update employee';
-      })
-      // Delete employee
       .addCase(deleteEmployee.fulfilled, (state, action) => {
         state.employees = state.employees.filter(emp => emp.id !== action.payload);
-      })
-      .addCase(deleteEmployee.rejected, (state, action) => {
-        state.error = action.error.message || 'Failed to delete employee';
-      })
-      // Payroll
-      .addCase(fetchPayroll.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchPayroll.fulfilled, (state, action) => {
-        state.loading = false;
-        state.payroll = action.payload;
-      })
-      .addCase(fetchPayroll.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || 'Failed to fetch payroll';
       });
   },
 });
 
-const { clearError } = appSlice.actions;
-const store = configureStore({
-  reducer: {
-    app: appSlice.reducer,
-  },
-});
+export const { clearError } = employeeSlice.actions;
+export default employeeSlice.reducer;
