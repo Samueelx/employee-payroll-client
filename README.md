@@ -45,7 +45,7 @@ node --version
 
 ```bash
 git clone git@github.com:Samueelx/employee-payroll-client.git
-cd employee-payroll-frontend
+cd employee-payroll-client
 ```
 
 ### 2. Install Dependencies
