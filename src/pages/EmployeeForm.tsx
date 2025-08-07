@@ -3,14 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createEmployee, updateEmployee, clearError } from '../features/employeeSlice';
 import type { AppDispatch, RootState } from '../store';
 import type { Employee } from '../types/employee.types';
-import { InputField } from '../components/common/InputField';
-import { Button } from '../components/common/Button';
-
+import { ErrorMessage } from '../components/common/ErrorMessage';
+import { Save, ArrowLeft } from 'lucide-react';
 
 
 const EmployeeForm = ({ employee, onBack }: { employee?: Employee | null; onBack: () => void }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { error } = useSelector((state: RootState) => state.app);
+  const { error } = useSelector((state: RootState) => state.employees.error);
   const isEdit = !!employee;
 
   const [formData, setFormData] = useState<Employee>({
@@ -232,3 +231,5 @@ const EmployeeForm = ({ employee, onBack }: { employee?: Employee | null; onBack
     </div>
   );
 };
+
+export default EmployeeForm;
